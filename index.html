@@ -2,16 +2,71 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Market Israel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛒 Market Israel</title>
+
+<style>
+body {
+  margin:0;
+  font-family:Arial;
+  background:#f5f5f5;
+}
+
+header {
+  background:#ff6600;
+  color:white;
+  padding:15px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+}
+
+.container {
+  padding:15px;
+}
+
+.card {
+  background:white;
+  padding:15px;
+  margin-bottom:10px;
+  border-radius:12px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+input {
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+button {
+  background:#ff6600;
+  color:white;
+  border:none;
+  padding:10px;
+  border-radius:8px;
+  width:100%;
+  font-size:16px;
+}
+
+button:hover {
+  opacity:0.9;
+}
+</style>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "ТВОЙ_API_KEY",
-  authDomain: "ТВОЙ_PROJECT.firebaseapp.com",
-  projectId: "ТВОЙ_PROJECT",
+  apiKey: "AIzaSyAXbaEdj-fjJ1fDsAHRp-AhFKAcbQuR7ds",
+  authDomain: "bozor-israel.firebaseapp.com",
+  projectId: "bozor-israel",
+  storageBucket: "bozor-israel.firebasestorage.app",
+  messagingSenderId: "244922463978",
+  appId: "1:244922463978:web:363b6f246203f6cdffc993"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -22,9 +77,18 @@ window.addAd = async function() {
   let price = document.getElementById("price").value;
   let phone = document.getElementById("phone").value;
 
+  if(!title || !price || !phone){
+    alert("Заполни всё");
+    return;
+  }
+
   await addDoc(collection(db, "ads"), {
     title, price, phone
   });
+
+  document.getElementById("title").value="";
+  document.getElementById("price").value="";
+  document.getElementById("phone").value="";
 
   loadAds();
 }
@@ -32,13 +96,15 @@ window.addAd = async function() {
 async function loadAds() {
   let html = "";
   const querySnapshot = await getDocs(collection(db, "ads"));
+
   querySnapshot.forEach((doc) => {
     let ad = doc.data();
+
     html += `
-    <div style="background:white;padding:10px;margin:10px;border-radius:10px">
+    <div class="card">
       <h3>${ad.title}</h3>
       <p>💰 ${ad.price}</p>
-      <button onclick="alert('${ad.phone}')">Показать номер</button>
+      <button onclick="alert('${ad.phone}')">📞 Показать номер</button>
     </div>
     `;
   });
@@ -51,18 +117,17 @@ window.onload = loadAds;
 
 </head>
 
-<body style="background:#f5f5f5;font-family:Arial">
+<body>
 
-<h2 style="background:#ff6600;color:white;padding:15px;text-align:center">
-Market Israel
-</h2>
+<header>🛒 Market Israel</header>
 
-<div style="padding:10px">
+<div class="container">
+
 <h3>Добавить объявление</h3>
 
-<input id="title" placeholder="Название"><br><br>
-<input id="price" placeholder="Цена"><br><br>
-<input id="phone" placeholder="Телефон"><br><br>
+<input id="title" placeholder="Название">
+<input id="price" placeholder="Цена">
+<input id="phone" placeholder="Телефон">
 
 <button onclick="addAd()">Добавить</button>
 
