@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Market Israel</title>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "ТВОЙ_API_KEY",
+  authDomain: "ТВОЙ_PROJECT.firebaseapp.com",
+  projectId: "ТВОЙ_PROJECT",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.addAd = async function() {
+  let title = document.getElementById("title").value;
+  let price = document.getElementById("price").value;
+  let phone = document.getElementById("phone").value;
+
+  await addDoc(collection(db, "ads"), {
+    title, price, phone
+  });
+
+  loadAds();
+}
+
+async function loadAds() {
+  let html = "";
+  const querySnapshot = await getDocs(collection(db, "ads"));
+  querySnapshot.forEach((doc) => {
+    let ad = doc.data();
+    html += `
+    <div style="background:white;padding:10px;margin:10px;border-radius:10px">
+      <h3>${ad.title}</h3>
+      <p>💰 ${ad.price}</p>
+      <button onclick="alert('${ad.phone}')">Показать номер</button>
+    </div>
+    `;
+  });
+
+  document.getElementById("ads").innerHTML = html;
+}
+
+window.onload = loadAds;
+</script>
+
+</head>
+
+<body style="background:#f5f5f5;font-family:Arial">
+
+<h2 style="background:#ff6600;color:white;padding:15px;text-align:center">
+Market Israel
+</h2>
+
+<div style="padding:10px">
+<h3>Добавить объявление</h3>
+
+<input id="title" placeholder="Название"><br><br>
+<input id="price" placeholder="Цена"><br><br>
+<input id="phone" placeholder="Телефон"><br><br>
+
+<button onclick="addAd()">Добавить</button>
+
+<hr>
+
+<h3>Объявления</h3>
+<div id="ads"></div>
+
+</div>
+
+</body>
+</html>
